@@ -1,0 +1,15 @@
+.app {
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  
+  .droppable-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .droppable-shape {
+    margin: 1rem;
+  }
+  

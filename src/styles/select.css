@@ -1,0 +1,47 @@
+.shape-selection-screen,
+.preview-design {
+  text-align: center;
+  padding: 2rem;
+}
+
+.shapes-grid,
+.design-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.375rem, 1fr));
+  gap: 1rem;
+}
+
+.shape-card,
+.design-card {
+  border: 0.125rem solid #ccc;
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.shape-card:hover,
+.design-card:hover {
+  transform: scale(1.05);
+}
+
+.shape-card.selected {
+  border-color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
