@@ -11,6 +11,7 @@ const DroppableArea = ({ designData, onNextDesign }) => {
   const [feedback, setFeedback] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [startTime, setStartTime] = useState(null);
+  const [tries, setTries] = useState(0);
 
   useEffect(() => {
     setStartTime(new Date());
@@ -53,6 +54,8 @@ const DroppableArea = ({ designData, onNextDesign }) => {
   };
 
   const evaluateAnswer = async () => {
+    setTries((prev) => prev + 1);
+
     const isCorrect = designData.droppableAreas.every((area) =>
       droppedShapes.some(
         (dropped) => dropped.id === area.id && dropped.droppedAt === "droppable"
@@ -99,6 +102,7 @@ const DroppableArea = ({ designData, onNextDesign }) => {
           timeSpent,
           numberOfDesigns,
           designNames,
+          tries, 
         }),
       });
 

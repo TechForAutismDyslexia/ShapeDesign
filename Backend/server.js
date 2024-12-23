@@ -16,31 +16,72 @@ mongoose.connect('mongodb://localhost:27017/shapeDesign', {
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
+// app.post('/api/design-completion', async (req, res) => {
+//   try {
+//     const { userId, timeSpent, selectedDesignIds } = req.body;
+
+//     const designs = await ShapeSelection.find({ 'designs.id': { $in: selectedDesignIds } });
+    
+//     const designNames = designs.map(design => design.designs
+//       .filter(d => selectedDesignIds.includes(d.id))
+//       .map(d => d.id)
+//     ).flat();
+
+//     const designCompletion = new DesignCompletion({
+//       userId,
+//       timeSpent,
+//       designNames,
+//     });
+
+//     await designCompletion.save();
+
+//     res.status(200).json({ message: 'Design completion data saved successfully!' });
+//   } catch (error) {
+//     console.error('Error saving design completion data:', error);
+//     res.status(500).json({ error: 'Failed to save design completion data' });
+//   }
+// });
+
 app.post('/api/design-completion', async (req, res) => {
   try {
-    const { userId, timeSpent, selectedDesignIds } = req.body;
+    const { userId, designNames, numberOfDesigns, timeSpent } = req.body;
 
-    const designs = await ShapeSelection.find({ 'designs.id': { $in: selectedDesignIds } });
-    
-    const designNames = designs.map(design => design.designs
-      .filter(d => selectedDesignIds.includes(d.id))
-      .map(d => d.id)
-    ).flat();
+    if (!userId || !designNames || !numberOfDesigns || !timeSpent) {
+      return res.status(400).json({ success: false, message: 'Invalid input data' });
+    }
 
-    const designCompletion = new DesignCompletion({
+    let existingRecord = await DesignCompletion.findOne({
       userId,
-      timeSpent,
-      designNames,
+      designNames: { $all: designNames },
     });
 
-    await designCompletion.save();
+    if (existingRecord) {
+      existingRecord.tries = (existingRecord.tries || 0) + 1;
+      existingRecord.timer = timeSpent; 
+      await existingRecord.save();
+    } else {
+      existingRecord = new DesignCompletion({
+        userId,
+        designNames,
+        numberOfDesigns,
+        timer: timeSpent, 
+        tries: 1,
+      });
+      await existingRecord.save();
+    }
 
-    res.status(200).json({ message: 'Design completion data saved successfully!' });
+    res.status(200).json({
+      success: true,
+      message: 'Design completion data saved successfully!',
+      data: existingRecord,
+    });
   } catch (error) {
     console.error('Error saving design completion data:', error);
-    res.status(500).json({ error: 'Failed to save design completion data' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
+
 
 app.get('/api/designs', async (req, res) => {
   try {
